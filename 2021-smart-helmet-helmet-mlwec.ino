@@ -21,7 +21,7 @@ struct_message statusHelmet;
 struct_message incomingMsg;
 String incomingMessage;
 #define SD_CS 5
-
+int eflag=0;
 String dataMessage;
 
 // Callback when data is sent
@@ -59,7 +59,7 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   Serial.println(len);
   incomingMessage = incomingMsg.s;
   if(incomingMessage=="emergency") {
-    buzzer_control(1);
+    eflag=1;
   }
 }
 
@@ -267,6 +267,11 @@ void setup() {
 }
 
 void loop() {
+  if(eflag==1) {
+    while(1) {
+      buzzer_control(1);
+    }
+  }
   int limitValue=read_limit();
   int g1Value=read_g1();
   int g2Value=read_g2();
@@ -275,28 +280,28 @@ void loop() {
   int buttonValue=read_button();
   
   if (limitValue==0) {
-    Serial.println("Helmet Alert from ID: 123");
-    send_to_station("Helmet Alert from ID: 123");
+    Serial.println("Helmet Alert");
+    send_to_station("Helmet");
   } 
   if(g1Value==1) {
-    Serial.println("SO2 Gas Alert from ID: 123");
-    send_to_station("SO2 Gas Detected from ID: 123");
+    Serial.println("SO2 Gas Alert");
+    send_to_station("SO2");
   }
   if(g2Value==1) {
-    Serial.println("CO Gas Alert from ID: 123");
-    send_to_station("CO Gas Detected from ID: 123");
+    Serial.println("CO Gas Alert");
+    send_to_station("CO");
   }
   if(g3Value==1) {
-    Serial.println("NO2 Gas Alert from ID: 123");
-    send_to_station("NO2 Gas Detected from ID: 123");
+    Serial.println("NO2 Gas Alert");
+    send_to_station("NO2");
   }
   if(gyroValue==1) {
-    Serial.println("Fall Alert from ID: 123");
-    send_to_station("Fall Alert from ID: 123");
+    Serial.println("Fall Alert");
+    send_to_station("Fall");
   }
   if(buttonValue==1) {
-    Serial.println("Emergency Alert from ID: 123");
-    send_to_station("Emergency Alert from ID: 123");
+    Serial.println("Emergency Alert");
+    send_to_station("Emergency");
   }
   
   if(limitValue==0 || g1Value==1 || g2Value==1 || g3Value==1 || gyroValue==1 || buttonValue==1) 
