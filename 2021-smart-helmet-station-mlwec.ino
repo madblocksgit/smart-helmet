@@ -48,11 +48,24 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   Serial.print("Bytes received: ");
   Serial.println(len);
   incomingMessage = incomingMsg.s;
+  Serial.println(incomingMessage);
   digitalWrite(buzzer,1);
   delay(1000);
   digitalWrite(buzzer,0);
-  Blynk.notify(incomingMessage);
-  delay(5000);
+  if(incomingMessage=="Fall")
+    Blynk.notify("Fall Alert");
+  if(incomingMessage=="Emergency")
+    Blynk.notify("Emergency Alert");
+  if(incomingMessage=="NO2")
+    Blynk.notify("NO2 Alert");
+  if(incomingMessage=="CO")
+    Blynk.notify("CO Alert");
+  if(incomingMessage=="SO2")
+    Blynk.notify("SO2 Alert");
+  if(incomingMessage=="Helmet")
+    Blynk.notify("Helmet Alert");
+    
+  
 }
 int32_t getWiFiChannel(const char *ssid)
 {
@@ -75,12 +88,13 @@ void setup()
   Serial.begin(9600);
   // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_AP_STA);
-  WiFi.begin("Madhu P","madhu2022");
+  Blynk.begin(auth,"Madhu P","madhu2022");
+  /*WiFi.begin("Madhu P","madhu2022");
   while(WiFi.status()!=WL_CONNECTED)
   {
     Serial.print(".");
     delay(100);
-  }
+  }*/
   Serial.println("Connected to Wifi Network");
   int32_t channel = getWiFiChannel(WIFI_SSID);
   WiFi.printDiag(Serial); // Uncomment to verify channel number before
@@ -107,7 +121,7 @@ void setup()
   }
   // Register for a callback function that will be called when data is received
   esp_now_register_recv_cb(OnDataRecv);
-  Blynk.begin(auth,"Madhu P","madhu2022");
+  
 }
  
 void loop() 
@@ -136,6 +150,6 @@ void updateDisplay()
   // Display Readings in Serial Monitor
   Serial.println("INCOMING Message:");
   Serial.print("mESSAGE: ");
-  Serial.print(incomingMsg.s);
+  Serial.print(incomingMessage);
   Serial.println(" ");
 }
